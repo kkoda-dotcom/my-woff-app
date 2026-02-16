@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <script src="https://static.worksmobile.net/static/wm/woff/edge/3.0.0/woff.js"></script>
 </head>
-<body style="text-align: center; padding-top: 50px;">
+<body style="text-align: center; padding-top: 50px; font-family: sans-serif;">
 
     <h2 id="welcome">読み込み中...</h2>
-    
-    <button id="btn" style="padding: 20px; font-size: 20px;">出席しました！</button>
+    <button id="btn" style="padding: 20px; font-size: 20px; cursor: pointer;">出席しました！</button>
 
     <script>
-      // 1. WOFFの初期化
+      // WOFFの初期化
       woff.init({ woffId: "d6J0bpN1tDgKxe7LyocP8Q" }).then(() => {
         
-        // 2. ログインした人の名前を表示する
+        // ログインした人の名前を表示する
         woff.getProfile().then(profile => {
           document.getElementById('welcome').innerText = profile.displayName + " さん";
-        });
-
-        // 3. ボタンを押した時の処理
-        document.getElementById('btn').addEventListener('click', () => {
-          woff.getProfile().then(profile => {
+          
+          // ボタンを押した時の処理
+          document.getElementById('btn').addEventListener('click', () => {
             fetch('https://script.google.com/macros/s/AKfycbyRBvbqYOVtPps_la9wirTIlIHaKTdoHIvjxsZSZ31FHPt-wroT-o0TA9DoiU5htQ/exec', {
               method: 'POST',
               body: JSON.stringify({ name: profile.displayName })
@@ -32,10 +29,10 @@
             });
           });
         });
+
       }).catch(err => {
-        document.getElementById('welcome').innerText = "エラー: IDが正しいか確認してください";
+        document.getElementById('welcome').innerText = "エラー: IDや設定を確認してください";
       });
     </script>
 </body>
-
 </html>
