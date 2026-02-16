@@ -22,7 +22,7 @@
         // 3. ボタンを押した時の処理
         document.getElementById('btn').addEventListener('click', () => {
           woff.getProfile().then(profile => {
-            fetch('あなたのGASのURL', {
+            fetch('https://script.google.com/macros/s/AKfycbyRBvbqYOVtPps_la9wirTIlIHaKTdoHIvjxsZSZ31FHPt-wroT-o0TA9DoiU5htQ/exec', {
               method: 'POST',
               body: JSON.stringify({ name: profile.displayName })
             })
@@ -37,4 +37,5 @@
       });
     </script>
 </body>
+
 </html>
