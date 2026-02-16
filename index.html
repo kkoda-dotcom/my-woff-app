@@ -1,20 +1,44 @@
-<h2 id="welcome">診断中...</h2>
-<p id="debug" style="color:red; font-size:12px;"></p>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>出席管理</title>
+    <script charset="utf-8" src="https://static.worksmobile.net/static/wm/woff/edge/3.7.1/sdk.js"></script>
+</head>
+<body style="text-align: center; padding-top: 50px; font-family: sans-serif;">
+    <h2 id="welcome">接続中...</h2>
+    <button id="btn" style="padding: 20px; font-size: 20px; display: none;">出席しました！</button>
 
-<script src="https://static.worksmobile.net/static/wm/woff/edge/3.0.0/woff.js"></script>
-<script>
-  window.onload = function() {
-    woff.init({ woffId: "d6J0bpN1tDgKxe7LyocP8Q" })
-      .then(() => {
-        return woff.getProfile();
-      })
-      .then(profile => {
-        document.getElementById('welcome').innerText = profile.displayName + "さん 成功！";
-      })
-      .catch(err => {
-        // エラー内容を画面に表示する
-        document.getElementById('welcome').innerText = "エラー発生";
-        document.getElementById('debug').innerText = "内容: " + JSON.stringify(err);
-      });
-  };
-</script>
+    <script>
+      // WOFFの初期化
+      woff.init({ woffId: "d6J0bpN1tDgKxe7LyocP8Q" })
+        .then(() => {
+          // 外部ブラウザ（PC等）で開く場合のログイン処理
+          if (!woff.isLoggedIn() && !woff.isInInsta()) {
+            woff.login();
+            return;
+          }
+          return woff.getProfile();
+        })
+        .then(profile => {
+          if (!profile) return;
+          document.getElementById('welcome').innerText = profile.displayName + " さん";
+          document.getElementById('btn').style.display = "inline-block";
+
+          document.getElementById('btn').onclick = () => {
+            fetch('https://script.google.com/macros/s/AKfycbyRBvbqYOVtPps_la9wirTIlIHaKTdoHIvjxsZSZ31FHPt-wroT-o0TA9DoiU5htQ/exec', {
+              method: 'POST',
+              body: JSON.stringify({ name: profile.displayName })
+            })
+            .then(() => {
+              alert('記録しました！');
+              woff.closeWindow();
+            });
+          };
+        })
+        .catch(err => {
+          document.getElementById('welcome').innerText = "エラー: " + err.code;
+        });
+    </script>
+</body>
+</html>
