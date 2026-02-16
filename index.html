@@ -1,38 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <script src="https://static.worksmobile.net/static/wm/woff/edge/3.0.0/woff.js"></script>
-</head>
-<body style="text-align: center; padding-top: 50px; font-family: sans-serif;">
+<h2 id="welcome">診断中...</h2>
+<p id="debug" style="color:red; font-size:12px;"></p>
 
-    <h2 id="welcome">読み込み中...</h2>
-    <button id="btn" style="padding: 20px; font-size: 20px; cursor: pointer;">出席しました！</button>
-
-    <script>
-      // WOFFの初期化
-      woff.init({ woffId: "d6J0bpN1tDgKxe7LyocP8Q" }).then(() => {
-        
-        // ログインした人の名前を表示する
-        woff.getProfile().then(profile => {
-          document.getElementById('welcome').innerText = profile.displayName + " さん";
-          
-          // ボタンを押した時の処理
-          document.getElementById('btn').addEventListener('click', () => {
-            fetch('https://script.google.com/macros/s/AKfycbyRBvbqYOVtPps_la9wirTIlIHaKTdoHIvjxsZSZ31FHPt-wroT-o0TA9DoiU5htQ/exec', {
-              method: 'POST',
-              body: JSON.stringify({ name: profile.displayName })
-            })
-            .then(() => {
-              alert('スプレッドシートに記録しました！');
-              woff.closeWindow();
-            });
-          });
-        });
-
-      }).catch(err => {
-        document.getElementById('welcome').innerText = "エラー: IDや設定を確認してください";
+<script src="https://static.worksmobile.net/static/wm/woff/edge/3.0.0/woff.js"></script>
+<script>
+  window.onload = function() {
+    woff.init({ woffId: "d6J0bpN1tDgKxe7LyocP8Q" })
+      .then(() => {
+        return woff.getProfile();
+      })
+      .then(profile => {
+        document.getElementById('welcome').innerText = profile.displayName + "さん 成功！";
+      })
+      .catch(err => {
+        // エラー内容を画面に表示する
+        document.getElementById('welcome').innerText = "エラー発生";
+        document.getElementById('debug').innerText = "内容: " + JSON.stringify(err);
       });
-    </script>
-</body>
-</html>
+  };
+</script>
