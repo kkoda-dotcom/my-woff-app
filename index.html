@@ -2,43 +2,65 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>出席管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>報告フォーム</title>
     <script charset="utf-8" src="https://static.worksmobile.net/static/wm/woff/edge/3.7.1/sdk.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; background-color: #f4f7f6; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { background-color: #00c300; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; }
+        button:active { background-color: #009900; }
+    </style>
 </head>
-<body style="text-align: center; padding-top: 50px; font-family: sans-serif;">
-    <h2 id="welcome">接続中...</h2>
-    <button id="btn" style="padding: 20px; font-size: 20px; display: none;">出席しました！</button>
+<body>
 
-    <script>
-      // WOFFの初期化
-      woff.init({ woffId: "d6J0bpN1tDgKxe7LyocP8Q" })
-        .then(() => {
-          // 外部ブラウザ（PC等）で開く場合のログイン処理
-          if (!woff.isLoggedIn() && !woff.isInInsta()) {
+<div class="card">
+    <h2 id="welcome">接続中...</h2>
+    
+    <label>【今の状態】</label>
+    <select id="status">
+        <option value="作業開始">作業開始</option>
+        <option value="外出中">外出中</option>
+        <option value="休憩">休憩</option>
+        <option value="作業完了">作業完了</option>
+    </select>
+
+    <label>【コメント】</label>
+    <textarea id="comment" rows="3" placeholder="一言どうぞ"></textarea>
+
+    <button id="btn">報告を送信する</button>
+</div>
+
+<script>
+    woff.init({ woffId: "d6J0bpN1tDgKxe7LyocP8Q" }).then(() => {
+        if (!woff.isLoggedIn() && !woff.isInInsta()) {
             woff.login();
             return;
-          }
-          return woff.getProfile();
-        })
-        .then(profile => {
-          if (!profile) return;
-          document.getElementById('welcome').innerText = profile.displayName + " さん";
-          document.getElementById('btn').style.display = "inline-block";
+        }
+        return woff.getProfile();
+    }).then(profile => {
+        if (!profile) return;
+        document.getElementById('welcome').innerText = profile.displayName + " さんの報告";
 
-          document.getElementById('btn').onclick = () => {
-            fetch('https://script.google.com/macros/s/AKfycbyRBvbqYOVtPps_la9wirTIlIHaKTdoHIvjxsZSZ31FHPt-wroT-o0TA9DoiU5htQ/exec', {
-              method: 'POST',
-              body: JSON.stringify({ name: profile.displayName })
+        document.getElementById('btn').onclick = () => {
+            const statusVal = document.getElementById('status').value;
+            const commentVal = document.getElementById('comment').value;
+
+            fetch('あなたの新しいGASのURL', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    name: profile.displayName,
+                    status: statusVal,
+                    comment: commentVal
+                })
             })
             .then(() => {
-              alert('記録しました！');
-              woff.closeWindow();
+                alert('報告を送信しました！');
+                woff.closeWindow();
             });
-          };
-        })
-        .catch(err => {
-          document.getElementById('welcome').innerText = "エラー: " + err.code;
-        });
-    </script>
+        };
+    }).catch(err => alert("エラー: " + err.code));
+</script>
 </body>
 </html>
